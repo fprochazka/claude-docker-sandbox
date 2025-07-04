@@ -1,4 +1,4 @@
-# Claude Safe Research
+# Claude Docker Sandbox
 
 A containerized environment for running Claude Code CLI with all permissions enabled in a safe, isolated setting.
 
@@ -8,25 +8,26 @@ This project provides a Docker-based sandbox for safely running Claude Code CLI 
 
 ## Components
 
-- **Dockerfile**: Ubuntu 22.04-based container with Claude Code CLI, Node.js, and Google Cloud CLI
-- **docker-compose.yml**: Service configuration with volume mounts for development workspace and credentials
-- **claude-safe.sh**: Wrapper script for easy container execution
-- **settings.local.json**: Claude Code permissions configuration for controlled access
+- **Dockerfile**: Ubuntu 22.04-based container with Claude Code CLI, Node.js 20, and Google Cloud CLI
+- **entrypoint.sh**: Container initialization script that creates user with matching host UID/GID
+- **claude-safe.sh**: Wrapper script for easy container execution that preserves working directory
 
 ## Features
 
-- Isolated execution environment
-- Pre-configured development tools (Node.js, Git, Google Cloud CLI)
+- Isolated execution environment with Docker containerization
+- Pre-configured development tools (Node.js 20, Git, Google Cloud CLI)
+- Automatic user creation with matching host UID/GID for seamless file permissions
+- Current working directory preservation - runs from wherever you invoke it
 - Volume mounts for persistent workspace access
-- Google Cloud and Anthropic API integration
-- Safe environment for running Claude Code with full permissions
+- Google Cloud and Anthropic API credential integration
+- Safe environment for running Claude Code with `--dangerously-skip-permissions`
 
 ## Installation
 
 1. Clone this repository:
    ```bash
-   git clone <repository-url> ~/tools/claude-safe-research
-   cd ~/tools/claude-safe-research
+   git clone <repository-url> ~/tools/claude-docker-sandbox
+   cd ~/tools/claude-docker-sandbox
    ```
 
 2. Make the wrapper script executable:
@@ -34,20 +35,15 @@ This project provides a Docker-based sandbox for safely running Claude Code CLI 
    chmod +x claude-safe.sh
    ```
 
-3. Build the container:
+3. Create an alias for easy access (add to your `.bashrc` or `.zshrc`):
    ```bash
-   docker compose build
-   ```
-
-4. Create an alias for easy access (add to your `.bashrc` or `.zshrc`):
-   ```bash
-   echo 'alias claude-safe="~/tools/claude-safe-research/claude-safe.sh"' >> ~/.bashrc
+   echo 'alias claude-safe="~/tools/claude-docker-sandbox/claude-safe.sh"' >> ~/.bashrc
    source ~/.bashrc
    ```
 
 ## Usage
 
-Run Claude Code in the safe container:
+Run Claude Code in the safe container from any directory:
 ```bash
 claude-safe [claude-code-arguments]
 ```
@@ -57,6 +53,8 @@ Or directly:
 ./claude-safe.sh [claude-code-arguments]
 ```
 
+The container will automatically build on first use and preserve your current working directory.
+
 ## Environment Variables
 
 ### Claude Code Configuration
@@ -64,17 +62,12 @@ Or directly:
 - `CLOUD_ML_REGION`: Google Cloud region for ML services  
 - `ANTHROPIC_VERTEX_PROJECT_ID`: Google Cloud project ID for Anthropic services
 
-### Container Configuration
-- `PUID`: User ID for container user (defaults to current user's ID)
-- `PGID`: Group ID for container user (defaults to current user's group ID)
-- `CONTAINER_USER`: Container username (defaults to current username)
-- `CONTAINER_GROUP`: Container group name (defaults to current group name)
-
-### Path Configuration
-- `HOST_DEVEL_DIR`: Host development directory (defaults to `$HOME/devel`)
-- `HOST_GCLOUD_CONFIG`: Host Google Cloud config directory (defaults to `$HOME/.config/gcloud`)
-- `HOST_ANTHROPIC_CONFIG`: Host Anthropic config directory (defaults to `$HOME/.config/anthropic`)
-- `HOST_CLAUDE_CONFIG`: Host Claude config directory (defaults to `$HOME/.claude`)
+### Volume Mounts
+The script automatically mounts:
+- Current working directory (`$(pwd)`) to the same path in container
+- `$HOME/.config/gcloud` (read-only) for Google Cloud credentials
+- `$HOME/.config/anthropic` (read-only) for Anthropic API credentials  
+- `$HOME/.claude` for Claude configuration
 
 ## Security Considerations
 
@@ -86,6 +79,6 @@ The container provides safe isolation while allowing full Claude Code permission
 
 ## Prerequisites
 
-- Docker and Docker Compose
+- Docker
 - Google Cloud credentials (if using Vertex AI)
 - Anthropic API credentials
