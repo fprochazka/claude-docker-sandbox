@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     git \
     bash \
+    gosu \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
@@ -18,12 +19,8 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.
 
 RUN npm install -g @anthropic-ai/claude-code
 
-RUN groupadd -g 1000 fprochazka && \
-    useradd -u 1000 -g 1000 -d /home/fprochazka -m -s /bin/bash fprochazka
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-USER fprochazka
-
-WORKDIR /home/fprochazka
-
-ENTRYPOINT ["claude"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh", "claude"]
 CMD ["--dangerously-skip-permissions"]

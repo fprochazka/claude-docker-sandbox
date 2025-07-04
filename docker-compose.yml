@@ -5,12 +5,16 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - /home/fprochazka/devel:/home/fprochazka/devel
-      - /home/fprochazka/.config/gcloud:/home/fprochazka/.config/gcloud:ro
-      - /home/fprochazka/.config/anthropic:/home/fprochazka/.config/anthropic:ro
-      - /home/fprochazka/.claude:/home/fprochazka/.claude
+      - ${PWD}:${PWD}
+      - ${HOME}/.config/gcloud:${HOME}/.config/gcloud:ro
+      - ${HOME}/.config/anthropic:${HOME}/.config/anthropic:ro
+      - ${HOME}/.claude:${HOME}/.claude
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/home/fprochazka/.config/gcloud/application_default_credentials.json
+      - PUID=${PUID:-$(id -u)}
+      - PGID=${PGID:-$(id -g)}
+      - CONTAINER_USER=${CONTAINER_USER:-user}
+      - CONTAINER_GROUP=${CONTAINER_GROUP:-user}
+      - GOOGLE_APPLICATION_CREDENTIALS=/home/${CONTAINER_USER:-user}/.config/gcloud/application_default_credentials.json
       - CLAUDE_CODE_USE_VERTEX=${CLAUDE_CODE_USE_VERTEX}
       - CLOUD_ML_REGION=${CLOUD_ML_REGION}
       - ANTHROPIC_VERTEX_PROJECT_ID=${ANTHROPIC_VERTEX_PROJECT_ID}

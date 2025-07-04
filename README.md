@@ -10,7 +10,7 @@ This project provides a Docker-based sandbox for safely running Claude Code CLI 
 
 - **Dockerfile**: Ubuntu 22.04-based container with Claude Code CLI, Node.js, and Google Cloud CLI
 - **docker-compose.yml**: Service configuration with volume mounts for development workspace and credentials
-- **claude-research.sh**: Wrapper script for easy container execution
+- **claude-safe.sh**: Wrapper script for easy container execution
 - **settings.local.json**: Claude Code permissions configuration for controlled access
 
 ## Features
@@ -31,7 +31,7 @@ This project provides a Docker-based sandbox for safely running Claude Code CLI 
 
 2. Make the wrapper script executable:
    ```bash
-   chmod +x claude-research.sh
+   chmod +x claude-safe.sh
    ```
 
 3. Build the container:
@@ -41,7 +41,7 @@ This project provides a Docker-based sandbox for safely running Claude Code CLI 
 
 4. Create an alias for easy access (add to your `.bashrc` or `.zshrc`):
    ```bash
-   echo 'alias claude-safe="~/tools/claude-safe-research/claude-research.sh"' >> ~/.bashrc
+   echo 'alias claude-safe="~/tools/claude-safe-research/claude-safe.sh"' >> ~/.bashrc
    source ~/.bashrc
    ```
 
@@ -54,14 +54,27 @@ claude-safe [claude-code-arguments]
 
 Or directly:
 ```bash
-./claude-research.sh [claude-code-arguments]
+./claude-safe.sh [claude-code-arguments]
 ```
 
 ## Environment Variables
 
+### Claude Code Configuration
 - `CLAUDE_CODE_USE_VERTEX`: Enable Vertex AI integration
 - `CLOUD_ML_REGION`: Google Cloud region for ML services  
 - `ANTHROPIC_VERTEX_PROJECT_ID`: Google Cloud project ID for Anthropic services
+
+### Container Configuration
+- `PUID`: User ID for container user (defaults to current user's ID)
+- `PGID`: Group ID for container user (defaults to current user's group ID)
+- `CONTAINER_USER`: Container username (defaults to current username)
+- `CONTAINER_GROUP`: Container group name (defaults to current group name)
+
+### Path Configuration
+- `HOST_DEVEL_DIR`: Host development directory (defaults to `$HOME/devel`)
+- `HOST_GCLOUD_CONFIG`: Host Google Cloud config directory (defaults to `$HOME/.config/gcloud`)
+- `HOST_ANTHROPIC_CONFIG`: Host Anthropic config directory (defaults to `$HOME/.config/anthropic`)
+- `HOST_CLAUDE_CONFIG`: Host Claude config directory (defaults to `$HOME/.claude`)
 
 ## Security Considerations
 
