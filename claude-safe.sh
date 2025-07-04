@@ -2,27 +2,28 @@
 
 set -euo pipefail
 
-PWD="$(pwd)"
-cd "$(dirname "$0")"
+# Image version - increment to force rebuild
+IMAGE_TAG="v1.2"
+IMAGE_NAME="claude-docker-sandbox:${IMAGE_TAG}"
+SCRIPT_DIR="$(dirname "$0")"
 
 # Set default environment variables if not already set
-export PWD
 export PUID="${PUID:-$(id -u)}"
 export PGID="${PGID:-$(id -g)}"
 export CONTAINER_USER="${CONTAINER_USER:-$(whoami)}"
 export CONTAINER_GROUP="${CONTAINER_GROUP:-$(id -gn)}"
 
 # Build the image if it doesn't exist
-if ! docker image inspect claude-docker-sandbox:latest >/dev/null 2>&1; then
-    echo "Building claude-docker-sandbox:latest..."
-    docker build -t claude-docker-sandbox:latest .
+if ! docker image inspect "${IMAGE_NAME}" >/dev/null 2>&1; then
+    echo "Building ${IMAGE_NAME}..."
+    docker build -t "${IMAGE_NAME}" "${SCRIPT_DIR}"
     echo ""
 fi
 
 # Run the container
 exec docker run --rm -it \
-  -w "$PWD" \
-  -v "${PWD}:${PWD}" \
+  -w "$(pwd)" \
+  -v "$(pwd):$(pwd)" \
   -v "${HOME}/.config/gcloud:${HOME}/.config/gcloud:ro" \
   -v "${HOME}/.config/anthropic:${HOME}/.config/anthropic:ro" \
   -v "${HOME}/.claude:${HOME}/.claude" \
@@ -34,4 +35,4 @@ exec docker run --rm -it \
   -e "CLAUDE_CODE_USE_VERTEX=${CLAUDE_CODE_USE_VERTEX}" \
   -e "CLOUD_ML_REGION=${CLOUD_ML_REGION}" \
   -e "ANTHROPIC_VERTEX_PROJECT_ID=${ANTHROPIC_VERTEX_PROJECT_ID}" \
-  claude-docker-sandbox:latest "$@"
+  "${IMAGE_NAME}" "$@"

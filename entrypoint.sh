@@ -14,16 +14,21 @@ if ! getent group "$GROUP_ID" > /dev/null 2>&1; then
 fi
 
 # Create user if it doesn't exist
+HOME_DIR="/home/$USERNAME"
 if ! getent passwd "$USER_ID" > /dev/null 2>&1; then
-    useradd -u "$USER_ID" -g "$GROUP_ID" -d "/home/$USERNAME" -m -s /bin/bash "$USERNAME"
+    if [ -d "$HOME_DIR" ]; then
+        # Home directory already exists (mounted), create user without home directory creation
+        useradd -u "$USER_ID" -g "$GROUP_ID" -d "$HOME_DIR" -M -s /bin/bash "$USERNAME"
+    else
+        # Home directory doesn't exist, create user with home directory
+        useradd -u "$USER_ID" -g "$GROUP_ID" -d "$HOME_DIR" -m -s /bin/bash "$USERNAME"
+    fi
 fi
 
-# Ensure home directory exists and has correct permissions
-HOME_DIR="/home/$USERNAME"
-if [ ! -d "$HOME_DIR" ]; then
-    mkdir -p "$HOME_DIR"
+# Only chown home directory if it was created by us (not mounted)
+if ! mountpoint -q "$HOME_DIR" 2>/dev/null; then
+    chown "$USER_ID:$GROUP_ID" "$HOME_DIR"
 fi
-chown "$USER_ID:$GROUP_ID" "$HOME_DIR"
 
 # Switch to the created user and execute the command
 exec gosu "$USER_ID:$GROUP_ID" "$@"
