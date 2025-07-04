@@ -1,0 +1,16 @@
+services:
+  claude-code:
+    build:
+      context: .
+    stdin_open: true
+    tty: true
+    volumes:
+      - /home/fprochazka/devel:/home/fprochazka/devel
+      - /home/fprochazka/.config/gcloud:/home/fprochazka/.config/gcloud:ro
+      - /home/fprochazka/.config/anthropic:/home/fprochazka/.config/anthropic:ro
+      - /home/fprochazka/.claude:/home/fprochazka/.claude
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/home/fprochazka/.config/gcloud/application_default_credentials.json
+      - CLAUDE_CODE_USE_VERTEX=${CLAUDE_CODE_USE_VERTEX}
+      - CLOUD_ML_REGION=${CLOUD_ML_REGION}
+      - ANTHROPIC_VERTEX_PROJECT_ID=${ANTHROPIC_VERTEX_PROJECT_ID}
