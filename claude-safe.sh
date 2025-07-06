@@ -54,7 +54,7 @@ fi
 get_env_vars() {
     local env_args=""
     while IFS='=' read -r key value; do
-        if [[ $key =~ ^(GOOGLE_CLOUD_|ANTHROPIC_|CLAUDE_CODE_|CLOUD_) ]]; then
+        if [[ $key =~ ^(GOOGLE_|CLOUD_|ANTHROPIC_|CLAUDE_|MCP_|BASH_|DISABLE_|HTTP_PROXY|HTTPS_PROXY|MAX_THINKING_TOKENS|MAX_MCP_OUTPUT_TOKENS) ]]; then
             env_args+=" -e \"${key}=${value}\""
         fi
     done < <(env)

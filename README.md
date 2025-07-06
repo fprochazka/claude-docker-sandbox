@@ -53,9 +53,7 @@ The container will automatically build on first use and preserve your current wo
 
 ### Claude Code Configuration
 
-- `CLAUDE_CODE_USE_VERTEX`: Enable Vertex AI integration
-- `CLOUD_ML_REGION`: Google Cloud region for ML services  
-- `ANTHROPIC_VERTEX_PROJECT_ID`: Google Cloud project ID for Anthropic services
+Should pass all ENVs from https://docs.anthropic.com/en/docs/claude-code/settings to the docker container
 
 ### Volume Mounts
 
