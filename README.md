@@ -61,6 +61,6 @@ The container will automatically build on first use and preserve your current wo
 
 The script automatically mounts:
 - Current working directory (`$(pwd)`) to the same path in container
-- `$HOME/.config/gcloud` (read-only) for Google Cloud credentials
-- `$HOME/.config/anthropic` (read-only) for Anthropic API credentials  
+- `$HOME/.config/gcloud` for Google Cloud credentials
+- `$HOME/.config/anthropic` for Anthropic API credentials  
 - `$HOME/.claude` for Claude configuration
