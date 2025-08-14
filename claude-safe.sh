@@ -7,7 +7,7 @@ else
 fi
 
 # Image version - increment to force rebuild
-IMAGE_TAG="v1.5"
+IMAGE_TAG="v1.6"
 IMAGE_NAME="claude-docker-sandbox:${IMAGE_TAG}"
 SCRIPT_DIR="$(dirname "$0")"
 
